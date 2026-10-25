@@ -25,7 +25,22 @@ public final class CosmeticRegistry {
 				-7.96f, 19.34f, -1.5f,   // pivot (model ichida)
 				0f, 0.5f, 2.6f,          // joylashuv: tana markazidan (x, y, z piksel)
 				0.5f,                    // o'lcham (1.0 = original, juda katta bo'ladi)
-				180f));                  // X o'qi atrofida burish
+				180f,                    // X o'qi atrofida burish
+				0f));                    // Y o'qi atrofida burish
+
+		// ---- SANTA HAT ----
+		// Model: pastki qirrasi y=1, markazi x=0,z=0. Uchi +x tomonga egilgan, shuning uchun Y atrofida 90 gradus
+		// buramiz, shunda uchi orqaga qaraydi.
+		register(new Cosmetic(
+				"santa_hat", CosmeticSlot.HEAD,
+				"/assets/cosmetics/models/santa_hat.quads",
+				Identifier.of(CosmeticsMod.MOD_ID, "textures/cosmetic/santa_hat.png"),
+				model -> model.head,
+				0f, 1f, 0f,              // pivot
+				0f, -6.5f, 0f,           // joylashuv: bosh markazidan (y manfiy = tepaga)
+				0.65f,                   // o'lcham
+				180f,                    // X o'qi atrofida burish
+				90f));                   // Y o'qi atrofida burish
 	}
 
 	public static void register(Cosmetic c) {

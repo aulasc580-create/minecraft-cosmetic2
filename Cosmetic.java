@@ -26,6 +26,7 @@ public final class Cosmetic {
 	private final float offX, offY, offZ;
 	private final float baseScale;
 	private final float rotXDeg;
+	private final float rotYDeg;
 
 	private QuadMesh mesh;
 
@@ -33,7 +34,7 @@ public final class Cosmetic {
 					Function<PlayerEntityModel, ModelPart> anchor,
 					float pivotX, float pivotY, float pivotZ,
 					float offX, float offY, float offZ,
-					float baseScale, float rotXDeg) {
+					float baseScale, float rotXDeg, float rotYDeg) {
 		this.id = id;
 		this.slot = slot;
 		this.meshResource = meshResource;
@@ -47,6 +48,7 @@ public final class Cosmetic {
 		this.offZ = offZ;
 		this.baseScale = baseScale;
 		this.rotXDeg = rotXDeg;
+		this.rotYDeg = rotYDeg;
 	}
 
 	public Text displayName() {
@@ -65,6 +67,7 @@ public final class Cosmetic {
 		float s = baseScale * sizeMultiplier;
 		matrices.scale(s, s, s);
 		if (rotXDeg != 0f) matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(rotXDeg));
+		if (rotYDeg != 0f) matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(rotYDeg));
 		matrices.translate(-pivotX / 16f, -pivotY / 16f, -pivotZ / 16f);
 	}
 }
