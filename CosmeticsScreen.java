@@ -11,25 +11,29 @@ import java.util.List;
 
 /**
  * Cosmetic tanlash menyusi (K tugmasi).
- * - Qatorga chap tugma bilan bosing: keyingi variant, o'ng tugma bilan: oldingisi.
- * - Pastdagi "Size" qatorida [-] va [+] bilan hajmni o'zgartiring.
+ * Har bir qatorda [<] va [>] tugmalari bor: ular oldingi/keyingi variantni tanlaydi.
+ * Pastda hajm: [-] va [+].
  */
 public class CosmeticsScreen extends Screen {
-	private static final int PANEL_W = 250;
-	private static final int ROW_H = 22;
-	private static final int ROW_GAP = 4;
+	private static final int PANEL_W = 340;
+	private static final int HEADER_H = 64;
+	private static final int ROW_H = 32;
+	private static final int ROW_GAP = 8;
+	private static final int ARROW_W = 30;
+	private static final int PAD = 14;
 
-	private static final int COL_PANEL = 0xEE12121C;
+	private static final int COL_PANEL = 0xF0101018;
 	private static final int COL_BORDER = 0xFF3B3B55;
 	private static final int COL_ACCENT = 0xFFD4AF6A;
-	private static final int COL_ROW = 0xFF1E1E2D;
-	private static final int COL_ROW_HOVER = 0xFF2C2C42;
-	private static final int COL_TEXT = 0xFFE8E8F0;
-	private static final int COL_MUTED = 0xFF9A9AB0;
+	private static final int COL_ROW = 0xFF1C1C2A;
+	private static final int COL_BTN = 0xFF2A2A40;
+	private static final int COL_BTN_HOVER = 0xFF44446A;
+	private static final int COL_TEXT = 0xFFF2F2FA;
+	private static final int COL_MUTED = 0xFF9A9AB4;
+	private static final int COL_ACTIVE = 0xFF8FE388;
 
 	private final Screen parent;
 	private final List<CosmeticSlot> slots = new ArrayList<>();
-
 	private int panelX, panelY, panelH;
 
 	public CosmeticsScreen(Screen parent) {
@@ -43,26 +47,32 @@ public class CosmeticsScreen extends Screen {
 		for (CosmeticSlot slot : CosmeticSlot.values()) {
 			if (!CosmeticRegistry.forSlot(slot).isEmpty()) slots.add(slot);
 		}
-		panelH = 46 + slots.size() * (ROW_H + ROW_GAP) + 8 + ROW_H + 18 + 20 + 14;
+		// sarlavha + slot qatorlari + hajm qatori + Done tugmasi
+		panelH = HEADER_H + slots.size() * (ROW_H + ROW_GAP) + 10 + ROW_H + 18 + 24 + PAD;
 		panelX = (this.width - PANEL_W) / 2;
-		panelY = (this.height - panelH) / 2;
+		panelY = Math.max(4, (this.height - panelH) / 2);
 
 		this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, btn -> this.close())
-				.dimensions(panelX + 12, panelY + panelH - 34, PANEL_W - 24, 20).build());
+				.dimensions(panelX + PAD, panelY + panelH - PAD - 24, PANEL_W - 2 * PAD, 24).build());
 	}
 
-	private int rowY(int index) {
-		return panelY + 46 + index * (ROW_H + ROW_GAP);
-	}
-
-	private int sizeRowY() {
-		return rowY(slots.size()) + 8;
-	}
+	// ---- joylashuv hisob-kitoblari ----
+	private int rowX() { return panelX + PAD; }
+	private int rowW() { return PANEL_W - 2 * PAD; }
+	private int rowY(int i) { return panelY + HEADER_H + i * (ROW_H + ROW_GAP); }
+	private int sizeRowY() { return rowY(slots.size()) + 10; }
+	/** Qatorning chap o'rtadagi "<" tugmasi x koordinatasi */
+	private int prevX() { return rowX() + 110; }
+	/** O'ngdagi ">" tugmasi x koordinatasi */
+	private int nextX() { return rowX() + rowW() - 4 - ARROW_W; }
+	private int btnY(int rowY) { return rowY + 3; }
+	private int btnH() { return ROW_H - 6; }
 
 	private static boolean inside(double mx, double my, int x, int y, int w, int h) {
 		return mx >= x && mx < x + w && my >= y && my < y + h;
 	}
 
+	// ---- chizish ----
 	// Hamma maxsus chizish shu yerda: vidjetlar (Done tugmasi) buning ustidan chiziladi.
 	@Override
 	public void renderBackground(DrawContext ctx, int mouseX, int mouseY, float delta) {
@@ -71,80 +81,83 @@ public class CosmeticsScreen extends Screen {
 		// Panel
 		ctx.fill(panelX - 1, panelY - 1, panelX + PANEL_W + 1, panelY + panelH + 1, COL_BORDER);
 		ctx.fill(panelX, panelY, panelX + PANEL_W, panelY + panelH, COL_PANEL);
-		ctx.fill(panelX, panelY, panelX + PANEL_W, panelY + 2, COL_ACCENT);
+		ctx.fill(panelX, panelY, panelX + PANEL_W, panelY + 3, COL_ACCENT);
 
-		// Sarlavha
-		ctx.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, panelY + 12, COL_ACCENT);
-		ctx.fill(panelX + 12, panelY + 28, panelX + PANEL_W - 12, panelY + 29, COL_BORDER);
-		ctx.drawCenteredTextWithShadow(this.textRenderer,
-				Text.literal("Click: next  |  Right click: previous"), this.width / 2, panelY + 33, COL_MUTED);
+		// Sarlavha (katta) va yordam matni
+		drawText(ctx, this.title, this.width / 2, panelY + 14, 2.0f, COL_ACCENT, true);
+		drawText(ctx, Text.literal("Use  <  >  to choose what you wear"), this.width / 2, panelY + 40, 1.0f, COL_MUTED, true);
+		ctx.fill(panelX + PAD, panelY + 55, panelX + PANEL_W - PAD, panelY + 56, COL_BORDER);
 
 		// Slot qatorlari
 		for (int i = 0; i < slots.size(); i++) {
 			CosmeticSlot slot = slots.get(i);
 			int y = rowY(i);
-			int x = panelX + 12;
-			int w = PANEL_W - 24;
-			boolean hover = inside(mouseX, mouseY, x, y, w, ROW_H);
-			ctx.fill(x, y, x + w, y + ROW_H, hover ? COL_ROW_HOVER : COL_ROW);
-			ctx.fill(x, y, x + 2, y + ROW_H, hover ? COL_ACCENT : COL_BORDER);
+			ctx.fill(rowX(), y, rowX() + rowW(), y + ROW_H, COL_ROW);
 
-			ctx.drawTextWithShadow(this.textRenderer, slot.displayName(), x + 10, y + 7, COL_MUTED);
+			drawText(ctx, slot.displayName(), rowX() + 12, y + 11, 1.2f, COL_MUTED, false);
 
 			Cosmetic c = CosmeticsConfig.get().equippedIn(slot);
 			Text value = c == null ? Text.translatable("cosmetics.none") : c.displayName();
-			Text shown = Text.empty().append("< ").append(value).append(" >");
-			int tw = this.textRenderer.getWidth(shown);
-			ctx.drawTextWithShadow(this.textRenderer, shown, x + w - tw - 8, y + 7, c == null ? COL_MUTED : COL_TEXT);
+			int mid = (prevX() + ARROW_W + nextX()) / 2;
+			drawText(ctx, value, mid, y + 11, 1.2f, c == null ? COL_MUTED : COL_ACTIVE, true);
+
+			drawButton(ctx, prevX(), btnY(y), ARROW_W, btnH(), "<", mouseX, mouseY);
+			drawButton(ctx, nextX(), btnY(y), ARROW_W, btnH(), ">", mouseX, mouseY);
 		}
 
 		// Hajm qatori
 		int sy = sizeRowY();
-		int sx = panelX + 12;
-		int sw = PANEL_W - 24;
-		ctx.fill(sx, sy, sx + sw, sy + ROW_H, COL_ROW);
-		ctx.fill(sx, sy, sx + 2, sy + ROW_H, COL_BORDER);
-		ctx.drawTextWithShadow(this.textRenderer, Text.literal("Size"), sx + 10, sy + 7, COL_MUTED);
-
-		int btnW = 20;
-		int plusX = sx + sw - 4 - btnW;
-		int minusX = plusX - 52 - btnW;
-		drawSmallButton(ctx, minusX, sy + 1, btnW, ROW_H - 2, "-", inside(mouseX, mouseY, minusX, sy + 1, btnW, ROW_H - 2));
-		drawSmallButton(ctx, plusX, sy + 1, btnW, ROW_H - 2, "+", inside(mouseX, mouseY, plusX, sy + 1, btnW, ROW_H - 2));
+		ctx.fill(rowX(), sy, rowX() + rowW(), sy + ROW_H, COL_ROW);
+		drawText(ctx, Text.literal("Size"), rowX() + 12, sy + 11, 1.2f, COL_MUTED, false);
 		String pct = Math.round(CosmeticsConfig.get().sizeMultiplier * 100) + "%";
-		ctx.drawCenteredTextWithShadow(this.textRenderer, Text.literal(pct), minusX + btnW + 26, sy + 7, COL_TEXT);
+		int mid = (prevX() + ARROW_W + nextX()) / 2;
+		drawText(ctx, Text.literal(pct), mid, sy + 11, 1.2f, COL_TEXT, true);
+		drawButton(ctx, prevX(), btnY(sy), ARROW_W, btnH(), "-", mouseX, mouseY);
+		drawButton(ctx, nextX(), btnY(sy), ARROW_W, btnH(), "+", mouseX, mouseY);
 	}
 
-	private void drawSmallButton(DrawContext ctx, int x, int y, int w, int h, String label, boolean hover) {
+	private void drawButton(DrawContext ctx, int x, int y, int w, int h, String label, int mx, int my) {
+		boolean hover = inside(mx, my, x, y, w, h);
 		ctx.fill(x, y, x + w, y + h, hover ? COL_ACCENT : COL_BORDER);
-		ctx.fill(x + 1, y + 1, x + w - 1, y + h - 1, hover ? COL_ROW_HOVER : COL_PANEL);
-		ctx.drawCenteredTextWithShadow(this.textRenderer, Text.literal(label), x + w / 2, y + (h - 8) / 2, COL_TEXT);
+		ctx.fill(x + 1, y + 1, x + w - 1, y + h - 1, hover ? COL_BTN_HOVER : COL_BTN);
+		drawText(ctx, Text.literal(label), x + w / 2, y + (h - 12) / 2 + 1, 1.5f, COL_TEXT, true);
 	}
 
+	/** Kattalashtirilgan matn chizadi. (x,y) - matnning chap-yuqori (yoki markaz-yuqori) nuqtasi. */
+	private void drawText(DrawContext ctx, Text text, int x, int y, float scale, int color, boolean centered) {
+		float drawX = x;
+		if (centered) drawX = x - this.textRenderer.getWidth(text) * scale / 2f;
+		ctx.getMatrices().push();
+		ctx.getMatrices().translate(drawX, (float) y, 0f);
+		ctx.getMatrices().scale(scale, scale, 1f);
+		ctx.drawTextWithShadow(this.textRenderer, text, 0, 0, color);
+		ctx.getMatrices().pop();
+	}
+
+	// ---- bosishlar ----
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		// Slot qatorlari
-		for (int i = 0; i < slots.size(); i++) {
-			if (inside(mouseX, mouseY, panelX + 12, rowY(i), PANEL_W - 24, ROW_H)) {
-				if (button == 0) cycle(slots.get(i), 1);
-				else if (button == 1) cycle(slots.get(i), -1);
+		if (button == 0) {
+			for (int i = 0; i < slots.size(); i++) {
+				int y = rowY(i);
+				if (inside(mouseX, mouseY, prevX(), btnY(y), ARROW_W, btnH())) {
+					cycle(slots.get(i), -1);
+					return true;
+				}
+				if (inside(mouseX, mouseY, nextX(), btnY(y), ARROW_W, btnH())) {
+					cycle(slots.get(i), 1);
+					return true;
+				}
+			}
+			int sy = sizeRowY();
+			if (inside(mouseX, mouseY, prevX(), btnY(sy), ARROW_W, btnH())) {
+				changeSize(-0.1f);
 				return true;
 			}
-		}
-		// Hajm tugmalari
-		int sy = sizeRowY();
-		int sx = panelX + 12;
-		int sw = PANEL_W - 24;
-		int btnW = 20;
-		int plusX = sx + sw - 4 - btnW;
-		int minusX = plusX - 52 - btnW;
-		if (button == 0 && inside(mouseX, mouseY, minusX, sy + 1, btnW, ROW_H - 2)) {
-			changeSize(-0.1f);
-			return true;
-		}
-		if (button == 0 && inside(mouseX, mouseY, plusX, sy + 1, btnW, ROW_H - 2)) {
-			changeSize(0.1f);
-			return true;
+			if (inside(mouseX, mouseY, nextX(), btnY(sy), ARROW_W, btnH())) {
+				changeSize(0.1f);
+				return true;
+			}
 		}
 		return super.mouseClicked(mouseX, mouseY, button);
 	}
