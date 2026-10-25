@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "cosmetics",
+  "version": "${version}",
+  "name": "Cosmetics",
+  "description": "Client-side cosmetics: backpacks, hats, capes, wings and more. Only you see them.",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["uz.cosmeticsmod.CosmeticsMod"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
