@@ -15,10 +15,10 @@ jobs:
           R=src/main/resources
           mkdir -p $J $R/assets/cosmetics/models $R/assets/cosmetics/lang $R/assets/cosmetics/textures/cosmetic
           mv -f *.java $J/ || true
+          mv -f *.quads $R/assets/cosmetics/models/ || true
+          mv -f *.png $R/assets/cosmetics/textures/cosmetic/ || true
           if [ -f fabric.mod.json ]; then mv -f fabric.mod.json $R/; fi
           if [ -f en_us.json ]; then mv -f en_us.json $R/assets/cosmetics/lang/; fi
-          if [ -f backpack.quads ]; then mv -f backpack.quads $R/assets/cosmetics/models/; fi
-          if [ -f backpack.png ]; then mv -f backpack.png $R/assets/cosmetics/textures/cosmetic/; fi
           find . -path ./.git -prune -o -type f -print | sort
 
       - uses: actions/setup-java@v4
