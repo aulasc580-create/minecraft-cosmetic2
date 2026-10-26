@@ -9,18 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Arrange files
+      - name: Unpack project.zip
         run: |
-          J=src/main/java/uz/cosmeticsmod
-          R=src/main/resources
-          mkdir -p $J $R/assets/cosmetics/models $R/assets/cosmetics/lang $R/assets/cosmetics/textures/cosmetic
-          mv -f *.java $J/ || true
-          mv -f *.quads $R/assets/cosmetics/models/ || true
-          if [ -f icon.png ]; then mv -f icon.png $R/assets/cosmetics/; fi
-          mv -f *.png $R/assets/cosmetics/textures/cosmetic/ || true
-          if [ -f fabric.mod.json ]; then mv -f fabric.mod.json $R/; fi
-          if [ -f en_us.json ]; then mv -f en_us.json $R/assets/cosmetics/lang/; fi
-          find . -path ./.git -prune -o -type f -print | sort
+          test -f project.zip || { echo "project.zip topilmadi (uni repository ildiziga yuklang)"; exit 1; }
+          rm -rf proj && mkdir proj && unzip -q project.zip -d proj
+          find proj -type f | sort
 
       - uses: actions/setup-java@v4
         with:
@@ -30,9 +23,9 @@ jobs:
         with:
           gradle-version: 8.12
       - name: Build
-        run: gradle build --no-daemon
+        run: gradle build --no-daemon -p proj
       - name: Upload jar
         uses: actions/upload-artifact@v4
         with:
           name: cosmetics-mod-jar
-          path: build/libs/*.jar
+          path: proj/build/libs/*.jar
