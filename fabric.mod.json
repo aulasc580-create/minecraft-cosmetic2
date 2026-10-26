@@ -4,9 +4,10 @@
   "version": "${version}",
   "name": "Cosmetics",
   "description": "Client-side cosmetics: backpacks, hats, capes, wings and more. Only you see them.",
-  "authors": [],
+  "authors": ["Rediska4"],
   "contact": {},
   "license": "All-Rights-Reserved",
+  "icon": "assets/cosmetics/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": ["uz.cosmeticsmod.CosmeticsMod"]

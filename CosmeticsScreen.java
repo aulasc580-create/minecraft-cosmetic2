@@ -87,6 +87,7 @@ public class CosmeticsScreen extends Screen {
 		drawText(ctx, this.title, this.width / 2, panelY + 14, 2.0f, COL_ACCENT, true);
 		drawText(ctx, Text.literal("Use  <  >  to choose what you wear"), this.width / 2, panelY + 40, 1.0f, COL_MUTED, true);
 		ctx.fill(panelX + PAD, panelY + 55, panelX + PANEL_W - PAD, panelY + 56, COL_BORDER);
+		drawText(ctx, Text.literal("by Rediska4"), panelX + PANEL_W - PAD - 58, panelY + 8, 0.9f, COL_MUTED, false);
 
 		// Slot qatorlari
 		for (int i = 0; i < slots.size(); i++) {
