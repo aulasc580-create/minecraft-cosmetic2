@@ -41,6 +41,19 @@ public final class CosmeticRegistry {
 				0.65f,                   // o'lcham
 				180f,                    // X o'qi atrofida burish
 				90f));                   // Y o'qi atrofida burish
+
+		// ---- HORNS (shox) ----
+		// Uchlari modelda +z ga egilgan, Y atrofida 180 gradus burilsa orqaga qaraydi.
+		register(new Cosmetic(
+				"horns", CosmeticSlot.HEAD,
+				"/assets/cosmetics/models/horns.quads",
+				Identifier.of(CosmeticsMod.MOD_ID, "textures/cosmetic/horns.png"),
+				model -> model.head,
+				0f, -4.27f, 0.9f,        // pivot
+				0f, -7.0f, 0f,           // joylashuv
+				0.65f,                   // o'lcham
+				180f,                    // X o'qi atrofida burish
+				180f));                  // Y o'qi atrofida burish
 	}
 
 	public static void register(Cosmetic c) {

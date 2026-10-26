@@ -85,7 +85,7 @@ public class CosmeticsScreen extends Screen {
 
 		// Sarlavha (katta) va yordam matni
 		drawText(ctx, this.title, this.width / 2, panelY + 14, 2.0f, COL_ACCENT, true);
-		drawText(ctx, Text.literal("Use  <  >  to choose what you wear"), this.width / 2, panelY + 40, 1.0f, COL_MUTED, true);
+		drawText(ctx, Text.literal("Use  <  >  or right click a row to change"), this.width / 2, panelY + 40, 1.0f, COL_MUTED, true);
 		ctx.fill(panelX + PAD, panelY + 55, panelX + PANEL_W - PAD, panelY + 56, COL_BORDER);
 		drawText(ctx, Text.literal("by Rediska4"), panelX + PANEL_W - PAD - 58, panelY + 8, 0.9f, COL_MUTED, false);
 
@@ -138,6 +138,15 @@ public class CosmeticsScreen extends Screen {
 	// ---- bosishlar ----
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		// O'ng tugma: qator ustida bosilsa keyingi variantga o'tadi (masalan keyingi shlyapa)
+		if (button == 1) {
+			for (int i = 0; i < slots.size(); i++) {
+				if (inside(mouseX, mouseY, rowX(), rowY(i), rowW(), ROW_H)) {
+					cycle(slots.get(i), 1);
+					return true;
+				}
+			}
+		}
 		if (button == 0) {
 			for (int i = 0; i < slots.size(); i++) {
 				int y = rowY(i);

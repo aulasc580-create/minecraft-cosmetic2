@@ -5,6 +5,10 @@
   "name": "Cosmetics",
   "description": "Client-side cosmetics: backpacks, hats, capes, wings and more. Only you see them.",
   "authors": ["Rediska4"],
+  "contributors": [
+    "state_L - Horn Accessory model (CC BY 4.0, sketchfab.com/3d-models/horn-accessory-3f21dc21a10e49008e770aa3ad4e5fd9)",
+    "xDeizs - Pixel Santa Hat model (sketchfab.com/3d-models/pixel-santa-hat-7edff3661dae4966ba6ddc35ef8d93d7)"
+  ],
   "contact": {},
   "license": "All-Rights-Reserved",
   "icon": "assets/cosmetics/icon.png",
