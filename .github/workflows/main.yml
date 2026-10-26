@@ -16,6 +16,7 @@ jobs:
           mkdir -p $J $R/assets/cosmetics/models $R/assets/cosmetics/lang $R/assets/cosmetics/textures/cosmetic
           mv -f *.java $J/ || true
           mv -f *.quads $R/assets/cosmetics/models/ || true
+          if [ -f icon.png ]; then mv -f icon.png $R/assets/cosmetics/; fi
           mv -f *.png $R/assets/cosmetics/textures/cosmetic/ || true
           if [ -f fabric.mod.json ]; then mv -f fabric.mod.json $R/; fi
           if [ -f en_us.json ]; then mv -f en_us.json $R/assets/cosmetics/lang/; fi
